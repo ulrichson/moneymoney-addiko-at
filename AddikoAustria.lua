@@ -5,7 +5,7 @@ WebBanking {
   description = string.format(MM.localizeText("Get balance and transactions for %s"), "Addiko Bank Österreich")
 }
 
-local debug = true
+local debug = false
 local overviewPage
 local ignoreSince = false -- ListAccounts sets this to true in order to get all transaction in the past
 
@@ -361,16 +361,38 @@ function RefreshAccount(account, since)
         return
       end
 
+      local amount = strToAmount(fields[8])
+      local accountNumber = trim(fields[1]):gsub("%s+", "")
+      local purpose = trim(fields[10])
+      local name = account.owner
+
+      -- Received transaction
+      if amount > 0 then
+        local senderName, senderIBAN = string.match(purpose, "(.+)%s+(IBAN:%s+%a%a%d%d[%d%s]+)")
+        senderName = trim(senderName)
+        senderIBAN = string.sub(senderIBAN, 7)
+        senderIBAN = senderIBAN:gsub("%s+", "")
+
+        if senderName ~= nil and senderName ~= "" then
+          name = senderName
+        end
+
+        if senderIBAN ~= nil and senderIBAN ~= "" then
+          accountNumber = senderIBAN
+        end
+      end
+
       -- CSV Header: IBAN;Auszugsnummer;Buchungsdatum;Valutadatum;Umsatzzeit;Zahlungsreferenz;Waehrung;Betrag;Buchungstext;Umsatztext
       local transaction = {
-        name = account.owner,
+        name = name,
+        accountNumber = accountNumber,
         bookingDate = strToDate(fields[3]),
         valueDate = strToDate(fields[4]),
         purposeCode = trim(fields[6]),
         currency = trim(fields[7]),
-        amount = strToAmount(fields[8]),
+        amount = amount,
         bookingText = trim(fields[9]),
-        purpose = trim(fields[10]),
+        purpose = purpose,
         booked = true
       }
 
