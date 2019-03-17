@@ -248,7 +248,6 @@ function RefreshAccount(account, since)
     error("Account type " .. account.type .. " is currently not supported")
   end
 
-  local result
   local parameter = {}
   local url = "/banking/main.xhtml"
 
@@ -279,8 +278,6 @@ function RefreshAccount(account, since)
 
   -- Set time filter
   parameter = {}
-
-  -- ignoreSince and "01.01.1970" or MM.localizeDate("dd.MM.yyyy", since)
   parameter["overlay-zeitraumauswahl:overlayForm:daterange:von:date"] =
     ignoreSince and "01.01.1970" or MM.localizeDate("dd.MM.yyyy", since)
   parameter["overlay-zeitraumauswahl:overlayForm:daterange:bis:date"] = os.date("%Y-%m-%d", os.time() + 48 * 60 * 60)
@@ -294,7 +291,7 @@ function RefreshAccount(account, since)
 
   content, charset, mime = JSFAjaxRequest(url, parameter, getViewStateFromContent(content))
 
-  -- Select Export
+  -- Select export
   parameter = {}
   parameter["content:kontenumsaetze-tab:form:kontoUmsaetze:umsatzTable:zeitraumauswahl:inline-period"] =
     "GENERAL_CUSTOM_ACTIVE"
@@ -319,7 +316,7 @@ function RefreshAccount(account, since)
 
   content, charset, mime = JSFAjaxRequest(url, parameter, getViewStateFromContent(content))
 
-  -- Select "export all"
+  -- Select export all
   parameter = {}
   parameter["content:kontenumsaetze-tab:form:kontoUmsaetze:umsatzTable:table_selection"] = "[]"
   parameter["content:kontenumsaetze-tab:form:kontoUmsaetze:umsatzTable:table_subselection"] = "[]"
