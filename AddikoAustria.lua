@@ -212,6 +212,7 @@ function ListAccounts(knownAccounts)
           accountNumber = iban,
           iban = iban,
           currency = "EUR",
+          bic = "HSEEAT2KXXX",
           type = type
         }
 
@@ -220,6 +221,7 @@ function ListAccounts(knownAccounts)
           print("  Name:", account.name)
           print("  Owner:", account.owner)
           print("  IBAN:", account.iban)
+          print("  BIC:", account.bic)
           print("  Currency:", account.currency)
           print("  Type:", account.type)
         end
